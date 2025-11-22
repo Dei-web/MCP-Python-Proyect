@@ -1,0 +1,8 @@
+{
+  "include": ["app"],
+  "exclude": [".venv"],
+  "reportMissingImports": true,
+  "reportMissingModuleSource": true,
+  "venvPath": ".",
+  "venv": "venv"
+}

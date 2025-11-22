@@ -1,0 +1,26 @@
+[project]
+name = "ia-integration"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.121.3",
+    "fastmcp>=2.13.1",
+    "openai>=2.8.1",
+    "psycopg2-binary>=2.9.11",
+    "pytest>=9.0.1",
+    "python-dotenv>=1.2.1",
+    "sqlalchemy>=2.0.44",
+]
+
+[tool.pytest.ini_options]
+testpaths = [
+    "app/test"
+]
+python_files = [
+    "test_*.py",
+    "*_test.py"
+]
+[tool.setuptools]
+packages = ["app"]
