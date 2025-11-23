@@ -16,24 +16,29 @@ Bot inteligente para agendamiento de citas en taller mecánico usando Claude AI.
 ## 🚀 Instalación
 
 ### 1. Clonar el repositorio
+
 ```bash
 git clone <tu-repo>
 cd taller-express-bot
 ```
 
 ### 2. Crear entorno virtual
+
 ```bash
 python -m venv venv
 source venv/bin/activate  # En Windows: venv\Scripts\activate
 ```
 
 ### 3. Instalar dependencias
+
 ```bash
 pip install -r requirements.txt
 ```
 
 ### 4. Configurar variables de entorno
+
 Crea un archivo `.env` en la raíz:
+
 ```env
 # Base de datos PostgreSQL
 DATABASE_URL=postgresql://usuario:password@localhost:5432/taller_db
@@ -43,6 +48,7 @@ ANTHROPIC_API_KEY=sk-ant-xxxxx
 ```
 
 ### 5. Crear la base de datos
+
 ```bash
 # Ejecutar migraciones o crear tablas manualmente
 psql -U usuario -d taller_db -f schema.sql
@@ -55,6 +61,7 @@ psql -U usuario -d taller_db -f schema.sql
 ### **Modo 1: API REST** (Para aplicaciones web/móvil)
 
 #### Iniciar el servidor
+
 ```bash
 python main_api.py
 ```
@@ -64,6 +71,7 @@ El servidor estará disponible en `http://localhost:8000`
 #### Endpoints disponibles:
 
 **1. Chat con el bot**
+
 ```bash
 POST /api/chat
 Content-Type: application/json
@@ -75,6 +83,7 @@ Content-Type: application/json
 ```
 
 **Respuesta:**
+
 ```json
 {
   "respuesta": "¡Hola! Con gusto te ayudo...",
@@ -86,16 +95,19 @@ Content-Type: application/json
 ```
 
 **2. Reiniciar conversación**
+
 ```bash
 POST /api/reset/conv_123
 ```
 
 **3. Listar conversaciones activas**
+
 ```bash
 GET /api/conversaciones
 ```
 
 #### Ejemplo de uso con curl:
+
 ```bash
 curl -X POST http://localhost:8000/api/chat \
   -H "Content-Type: application/json" \
@@ -113,11 +125,13 @@ curl -X POST http://localhost:8000/api/chat \
 Edita el archivo de configuración de Claude Desktop:
 
 **macOS/Linux:**
+
 ```bash
 nano ~/Library/Application\ Support/Claude/claude_desktop_config.json
 ```
 
 **Windows:**
+
 ```
 %APPDATA%\Claude\claude_desktop_config.json
 ```
@@ -129,9 +143,7 @@ nano ~/Library/Application\ Support/Claude/claude_desktop_config.json
   "mcpServers": {
     "taller-express-bot": {
       "command": "python",
-      "args": [
-        "/ruta/completa/a/tu/proyecto/server.py"
-      ],
+      "args": ["/ruta/completa/a/tu/proyecto/server.py"],
       "env": {
         "DATABASE_URL": "postgresql://usuario:password@localhost:5432/taller_db",
         "PYTHONPATH": "/ruta/completa/a/tu/proyecto"
@@ -154,11 +166,13 @@ En Claude Desktop, deberías ver el icono 🔨 indicando que el servidor MCP est
 #### 5. Usar el bot
 
 Simplemente chatea con Claude:
+
 ```
 "Hola, necesito agendar una cita para cambio de aceite el próximo martes a las 10am"
 ```
 
 Claude usará automáticamente las herramientas del bot para:
+
 - Buscar si eres cliente existente
 - Crear tu registro si eres nuevo
 - Registrar tu información de contacto
@@ -263,17 +277,20 @@ graph TD
 ## 🚨 Troubleshooting
 
 ### El servidor MCP no se conecta en Claude Desktop
+
 1. Verifica las rutas absolutas en el config
 2. Asegúrate de que Python esté en tu PATH
 3. Revisa los logs de Claude Desktop
 4. Prueba el servidor manualmente: `python server.py`
 
 ### Error de base de datos
+
 1. Verifica que PostgreSQL esté corriendo
 2. Confirma las credenciales en `.env`
 3. Prueba la conexión: `python -m app.test.test_connect`
 
 ### API REST no responde
+
 1. Verifica que el puerto 8000 esté libre
 2. Confirma que ANTHROPIC_API_KEY esté configurada
 3. Revisa logs en la consola
@@ -300,6 +317,7 @@ MIT License
 ## 👥 Contribuciones
 
 Las contribuciones son bienvenidas. Por favor:
+
 1. Fork el proyecto
 2. Crea una rama (`git checkout -b feature/nueva-funcionalidad`)
 3. Commit tus cambios (`git commit -m 'Agregar nueva funcionalidad'`)
@@ -310,5 +328,6 @@ Las contribuciones son bienvenidas. Por favor:
 
 ## 📞 Soporte
 
-Para preguntas o soporte, contacta a [tu-email@ejemplo.com]
+```
+
 ```
