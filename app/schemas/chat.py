@@ -9,7 +9,7 @@ class MensajeRequest(BaseModel):
 
 
 class MensajeResponse(BaseModel):
-    respuesta: str
+    respuesta: str | None
     conversacion_id: str
     herramientas_usadas: List[dict] = []
     cita_creada: bool = False
