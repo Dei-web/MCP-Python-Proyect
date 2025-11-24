@@ -8,6 +8,8 @@ from app.services.client_service import ClienteService
 from app.schemas.client import ClientCreate
 from app.services.client_contact import ClientContactService
 from app.schemas.client_contact import ClientContactCreate
+import re
+
 
 agent = FastMCP("Sistema de Gestión de Citas")
 
@@ -71,6 +73,9 @@ def _crear_contacto_logic(
         db.close()
 
 
+# En app/mcp/agent.py
+
+
 def _crear_cita_logic(
     clientId: int,
     appointmentDate: str,
@@ -79,9 +84,75 @@ def _crear_cita_logic(
     state: str = "ASIGNADA",
     employedId: int | None = None,
 ) -> dict:
-    """Lógica para crear una nueva cita"""
     db = next(get_db())
     try:
+        print(f"📅 Fecha recibida: {appointmentDate}")
+
+        # Validar y corregir fecha/hora
+        try:
+            # Parsear fecha
+            fecha_cita = None
+            formato_usado = None
+
+            for fmt in ["%Y-%m-%dT%H:%M:%S", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d"]:
+                try:
+                    fecha_cita = datetime.strptime(appointmentDate, fmt)
+                    formato_usado = fmt
+                    break
+                except:
+                    continue
+
+            if fecha_cita is None:
+                return {
+                    "status": "error",
+                    "message": "Formato de fecha inválido. Use: YYYY-MM-DD HH:MM:SS",
+                }
+
+            print(f"📅 Fecha parseada: {fecha_cita}")
+            print(f"🕐 Hora: {fecha_cita.hour}:{fecha_cita.minute}")
+
+            # Corregir año si es necesario
+            año_actual = datetime.now().year
+            if fecha_cita.year < año_actual:
+                print(f"⚠️ Corrigiendo año de {fecha_cita.year} a {año_actual}")
+                fecha_cita = fecha_cita.replace(year=año_actual)
+
+            # Si la fecha ya pasó, moverla al año siguiente
+            if fecha_cita < datetime.now():
+                print(f"⚠️ Fecha en el pasado, moviendo a {año_actual + 1}")
+                fecha_cita = fecha_cita.replace(year=año_actual + 1)
+
+            # ← VALIDAR HORARIO DE ATENCIÓN
+            hora = fecha_cita.hour
+            dia_semana = fecha_cita.weekday()  # 0=Lunes, 6=Domingo
+
+            if dia_semana == 6:  # Domingo
+                return {
+                    "status": "error",
+                    "message": "El taller está cerrado los domingos. Por favor elija otro día.",
+                }
+
+            if dia_semana == 5:  # Sábado
+                if hora < 8 or hora >= 14:
+                    return {
+                        "status": "error",
+                        "message": "Los sábados atendemos de 8:00 AM a 2:00 PM. Por favor elija otra hora.",
+                    }
+            else:  # Lunes a Viernes
+                if hora < 8 or hora >= 18:
+                    return {
+                        "status": "error",
+                        "message": "Nuestro horario es de 8:00 AM a 6:00 PM. Por favor elija otra hora.",
+                    }
+
+            appointmentDate = fecha_cita.strftime("%Y-%m-%d %H:%M:%S")
+            print(f"✅ Fecha final: {appointmentDate}")
+
+        except Exception as e:
+            print(f"❌ Error procesando fecha: {str(e)}")
+            return {"status": "error", "message": f"Error procesando fecha: {str(e)}"}
+
+        # Crear cita
         data = AppointmentCreate(
             clientId=clientId,
             appointmentDate=appointmentDate,
@@ -90,8 +161,10 @@ def _crear_cita_logic(
             state=AppointmentState(state),
             employedId=employedId,
         )
+
         result = AppointmentService.crear_cita(db, data)
         return json.loads(result)
+
     except Exception as e:
         return {"status": "error", "message": str(e)}
     finally:

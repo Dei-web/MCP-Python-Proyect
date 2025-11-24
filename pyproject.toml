@@ -12,6 +12,7 @@ dependencies = [
     "psycopg2-binary>=2.9.11",
     "pytest>=9.0.1",
     "python-dotenv>=1.2.1",
+    "pytz>=2025.2",
     "sqlalchemy>=2.0.44",
 ]
 
